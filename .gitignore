@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+data/app.db
+assets/product_images/*.jpg
+assets/product_images/*.jpeg
+assets/product_images/*.png
+!assets/product_images/.gitkeep
