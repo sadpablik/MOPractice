@@ -1,5 +1,7 @@
 # Shoe Store WebApp
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/eb8dce507ad04210a9fa15a58662bc97)](https://app.codacy.com/gh/sadpablik/MOPractice/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 Веб-приложение для управления товарами обувного магазина.
 
 Технологии:
@@ -8,16 +10,21 @@
 - Данные: загрузка товаров из `import/Tovar.xlsx`
 - Картинки: раздаются backend по пути `/images/*`
 
-## Что уже реализовано
+## Что реализовано
 
 - Авторизация по ролям: администратор, менеджер, клиент, гость
 - Список товаров с ценой, скидкой, остатком и фотографией
 - Подсветка товаров:
 	- голубой фон, если товара нет на складе
-	- зеленый фон, если скидка больше 15%
-- Фильтрация и поиск товаров для менеджера и администратора
+	- зеленый фон (#2E8B57), если скидка больше 15%
+	- перечёркнутая цена при наличии скидки
+- Поиск по всем текстовым полям, фильтрация по поставщику
+- Сортировка по остатку (↑↓) для менеджера и администратора
+- Добавление / редактирование / удаление товаров (администратор)
 - Блок заказов для менеджера и администратора
+- Добавление / редактирование / удаление заказов (администратор)
 - REST API для авторизации, товаров и заказов
+- Линтер: ESLint (frontend), Flake8 (backend)
 
 ## Структура проекта
 
@@ -29,15 +36,26 @@ webapp/
 			schemas.py
 			store.py
 		requirements.txt
+		.flake8
 	frontend/
 		src/
+			components/
+				LoginPanel.jsx
+				ProductTable.jsx
+				ProductForm.jsx
+				OrdersTable.jsx
+				OrderForm.jsx
+			App.jsx
+			api.js
+			styles.css
+		eslint.config.js
 		package.json
 	README.md
 ```
 
 ## Требования
 
-- Python 3.14+
+- Python 3.11+
 - Node.js 18+
 - npm
 
@@ -45,13 +63,13 @@ webapp/
 
 Backend:
 ```powershell
-cd C:\Users\sadpa\Projects\STUDY\METODOLOGIARAZRABOTKIPO\PRACTICEONEEEE\webapp\backend
-c:/Users/sadpa/Projects/STUDY/METODOLOGIARAZRABOTKIPO/.venv/Scripts/python.exe -m pip install -r requirements.txt
+cd PRACTICEONEEEE\webapp\backend
+pip install -r requirements.txt
 ```
 
 Frontend:
 ```powershell
-cd C:\Users\sadpa\Projects\STUDY\METODOLOGIARAZRABOTKIPO\PRACTICEONEEEE\webapp\frontend
+cd PRACTICEONEEEE\webapp\frontend
 npm install
 ```
 
@@ -59,35 +77,40 @@ npm install
 
 Терминал 1 (backend):
 ```powershell
-cd C:\Users\sadpa\Projects\STUDY\METODOLOGIARAZRABOTKIPO\PRACTICEONEEEE\webapp\backend
-c:/Users/sadpa/Projects/STUDY/METODOLOGIARAZRABOTKIPO/.venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000
+cd PRACTICEONEEEE\webapp\backend
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
 Терминал 2 (frontend):
 ```powershell
-cd C:\Users\sadpa\Projects\STUDY\METODOLOGIARAZRABOTKIPO\PRACTICEONEEEE\webapp\frontend
+cd PRACTICEONEEEE\webapp\frontend
 npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
 Открыть:
 - Frontend: http://127.0.0.1:5173
 - Backend API docs: http://127.0.0.1:8000/docs
-- Backend health: http://127.0.0.1:8000/health
 
-## Запуск одной командой (PowerShell)
-
-Команда откроет 2 новых окна: одно для backend, второе для frontend.
+## Запуск линтеров
 
 ```powershell
-Start-Process powershell -ArgumentList '-NoExit','-Command','cd C:\Users\sadpa\Projects\STUDY\METODOLOGIARAZRABOTKIPO\PRACTICEONEEEE\webapp\backend; c:/Users/sadpa/Projects/STUDY/METODOLOGIARAZRABOTKIPO/.venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000'; Start-Process powershell -ArgumentList '-NoExit','-Command','cd C:\Users\sadpa\Projects\STUDY\METODOLOGIARAZRABOTKIPO\PRACTICEONEEEE\webapp\frontend; npm run dev -- --host 127.0.0.1 --port 5173'
+# Frontend
+cd PRACTICEONEEEE\webapp\frontend
+npm run lint
+
+# Backend
+cd PRACTICEONEEEE\webapp\backend
+flake8 app/
 ```
 
 ## Демо-аккаунты
 
-- Администратор: admin@shop.local / admin123
-- Менеджер: manager@shop.local / manager123
-- Клиент: client@shop.local / client123
-- Можно войти как гость без логина
+| Роль | Логин | Пароль |
+|---|---|---|
+| Администратор | admin@shop.local | admin123 |
+| Менеджер | manager@shop.local | manager123 |
+| Клиент | client@shop.local | client123 |
+| Гость | — | — |
 
 ## API
 
@@ -100,17 +123,3 @@ Start-Process powershell -ArgumentList '-NoExit','-Command','cd C:\Users\sadpa\P
 - POST `/orders`
 - PUT `/orders/{order_id}`
 - DELETE `/orders/{order_id}`
-
-## Источник данных
-
-- Товары автоматически загружаются из `PRACTICEONEEEE/import/Tovar.xlsx` при старте backend.
-- Изображения берутся из `PRACTICEONEEEE/import` и доступны по URL `http://127.0.0.1:8000/images/<filename>`.
-- Если изображение отсутствует, используется `picture.png`.
-
-## Если сайт не открывается
-
-1. Проверь, что backend отвечает: http://127.0.0.1:8000/health
-2. Проверь, что frontend запущен на 5173 порту
-3. Не добавляй лишние символы перед командами (`мц`, `мцс` и т.д.)
-4. Если порт занят, освободи его или смени порт в командах запуска
-5. После изменений сделай жесткое обновление страницы: Ctrl+F5
