@@ -22,4 +22,8 @@ export const api = {
     request(`/products/${article}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteProduct: (article) => request(`/products/${article}`, { method: "DELETE" }),
   getOrders: () => request("/orders"),
+  createOrder: (body) => request("/orders", { method: "POST", body: JSON.stringify(body) }),
+  updateOrder: (id, body) =>
+    request(`/orders/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteOrder: (id) => request(`/orders/${id}`, { method: "DELETE" }),
 };

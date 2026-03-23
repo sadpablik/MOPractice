@@ -18,14 +18,21 @@ export default function App() {
     [products],
   );
 
+  // Поиск работает по всем текстовым полям одновременно
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-
     return products.filter((product) => {
       const bySupplier = supplier === "all" || product.supplier === supplier;
       const byQuery =
         normalizedQuery.length === 0 ||
-        [product.article, product.name, product.category, product.supplier, product.manufacturer]
+        [
+          product.article,
+          product.name,
+          product.category,
+          product.supplier,
+          product.manufacturer,
+          product.description,
+        ]
           .join(" ")
           .toLowerCase()
           .includes(normalizedQuery);
@@ -84,6 +91,7 @@ export default function App() {
           <p className="hint">Панель управления</p>
           <h1>Склад обуви</h1>
         </div>
+        {/* ФИО и роль пользователя в правом верхнем углу */}
         <div className="user-box">
           <p>{user.full_name}</p>
           <small>{user.role}</small>
@@ -97,14 +105,16 @@ export default function App() {
 
       <ProductTable
         products={filteredProducts}
+        allProducts={products}
         role={user.role}
         query={query}
         setQuery={setQuery}
         supplier={supplier}
         setSupplier={setSupplier}
         suppliers={suppliers}
+        onDataChange={loadData}
       />
-      <OrdersTable orders={orders} role={user.role} />
+      <OrdersTable orders={orders} role={user.role} onDataChange={loadData} />
     </main>
   );
 }
